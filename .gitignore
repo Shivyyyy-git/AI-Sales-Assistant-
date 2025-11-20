@@ -74,3 +74,22 @@ Thumbs.db
 # Compiled files
 *.pyc
 *.pyo
+
+# Large media files (sample audio files - keep directory structure)
+audio-files/*.m4a
+audio-files/*.mp3
+audio-files/*.wav
+
+# Diagnostic and temporary documentation
+*_SUMMARY.md
+*_COMPLETE.md
+BUGFIX_*.md
+CRITICAL_*.md
+FILE_*.md
+WEBSOCKET_*.md
+
+# Zip files
+*.zip
+
+# Temporary helper scripts
+push_to_personal_github.sh
