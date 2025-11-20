@@ -1,6 +1,6 @@
 
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Recommendation, Community } from '../types';
 import MapView from './MapView';
 
@@ -8,6 +8,9 @@ interface RecommendationsCardProps {
   recommendations: Recommendation[];
   allCommunities: Community[];
   onCompare: (communities: Community[]) => void;
+  onUpdateExcelCRM?: (option: 'excel' | 'crm' | 'both') => void;
+  onSendEmailToClient?: () => void;
+  onSendEmailToManager?: () => void;
 }
 
 const PartnerBadge: React.FC = () => (
@@ -16,6 +19,22 @@ const PartnerBadge: React.FC = () => (
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
         Partner
+    </div>
+);
+
+const PartnerReminderBanner: React.FC = () => (
+    <div className="bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 border-2 border-amber-300 rounded-lg p-3 shadow-lg animate-pulse ring-2 ring-amber-200/50 text-right">
+        <div className="flex items-start gap-2.5 justify-end">
+            <div className="flex-1 min-w-0 text-right">
+                <p className="text-xs font-bold text-amber-900 leading-tight">💰 Partner Spotlight</p>
+                <p className="text-[10px] text-amber-800 leading-tight mt-0.5">Higher commissions — mention even if #2 or #3</p>
+            </div>
+            <div className="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center animate-bounce">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 00-2 0v4a1 1 0 00.553.894l3 1.5a1 1 0 00.894-1.788L11 9.382V6z" clipRule="evenodd" />
+                </svg>
+            </div>
+        </div>
     </div>
 );
 
@@ -36,9 +55,40 @@ const ViewSwitcher: React.FC<{ viewMode: 'list' | 'map'; onViewChange: (mode: 'l
     );
 };
 
-const RecommendationsCard: React.FC<RecommendationsCardProps> = ({ recommendations, allCommunities, onCompare }) => {
+const RecommendationsCard: React.FC<RecommendationsCardProps> = ({ 
+  recommendations, 
+  allCommunities, 
+  onCompare,
+  onUpdateExcelCRM,
+  onSendEmailToClient,
+  onSendEmailToManager
+}) => {
   const [selectedForComparison, setSelectedForComparison] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [showExcelCRMMenu, setShowExcelCRMMenu] = useState(false);
+  const [showEmailMenu, setShowEmailMenu] = useState(false);
+  const excelCRMMenuRef = useRef<HTMLDivElement>(null);
+  const emailMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close Excel/CRM menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (excelCRMMenuRef.current && !excelCRMMenuRef.current.contains(event.target as Node)) {
+        setShowExcelCRMMenu(false);
+      }
+      if (emailMenuRef.current && !emailMenuRef.current.contains(event.target as Node)) {
+        setShowEmailMenu(false);
+      }
+    };
+
+    if (showExcelCRMMenu || showEmailMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showExcelCRMMenu, showEmailMenu]);
 
   const communitiesMap = useMemo(() => {
     const map = new Map<string, Community>();
@@ -73,29 +123,154 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({ recommendatio
   const findRecByName = (name: string) => recommendations.find(rec => rec.name === name);
 
   return (
-    <div className="bg-white/80 backdrop-blur-md border border-gray-200/80 rounded-xl p-6 shadow-sm flex flex-col">
-      <div className="flex items-center justify-between mb-4 flex-shrink-0">
+    <div className="bg-white/90 backdrop-blur-lg border-2 border-gray-200/60 rounded-2xl p-6 lg:p-7 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col">
+      <div className="flex flex-col gap-3 mb-4 flex-shrink-0">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-blue-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <h2 className="text-xl font-bold text-gray-800">Top Recommendations</h2>
+            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-800">Top Recommendations</h2>
         </div>
-        <ViewSwitcher viewMode={viewMode} onViewChange={setViewMode} />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <ViewSwitcher viewMode={viewMode} onViewChange={setViewMode} />
+        </div>
+      </div>
+        {recommendations.length > 0 && (
+          <div className="self-stretch sm:self-end max-w-sm">
+            <PartnerReminderBanner />
+          </div>
+        )}
       </div>
 
-       <div className="flex justify-center mb-4 flex-shrink-0">
-         <button
-            onClick={handleCompareClick}
-            disabled={selectedForComparison.length !== 2}
-            className="w-full max-w-xs flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-blue-600 border border-transparent text-white hover:bg-blue-700 focus:ring-blue-500"
-        >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-               <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1z" />
-            </svg>
-            Compare Selected ({selectedForComparison.length})
-        </button>
+       <div className="flex flex-col gap-3 mb-4 flex-shrink-0">
+         {/* Action Buttons Row - All using Compare Selected style */}
+         <div className="flex flex-wrap justify-center gap-2.5">
+           {/* Compare Selected Button - First */}
+           <button
+             onClick={handleCompareClick}
+             disabled={selectedForComparison.length !== 2}
+             className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-blue-600 border border-transparent text-white hover:bg-blue-700 focus:ring-blue-500"
+           >
+             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1z" />
+             </svg>
+             Compare Selected ({selectedForComparison.length})
+           </button>
+
+           {/* Update Excel/CRM Button */}
+           {onUpdateExcelCRM && (
+             <div className="relative" ref={excelCRMMenuRef}>
+               <button
+                 onClick={() => setShowExcelCRMMenu(!showExcelCRMMenu)}
+                 className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 bg-blue-600 border border-transparent text-white hover:bg-blue-700 focus:ring-blue-500"
+                 title="Update Excel/CRM"
+               >
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                 </svg>
+                 Update Excel/CRM
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                 </svg>
+               </button>
+               {showExcelCRMMenu && (
+                 <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white border-2 border-gray-200 rounded-lg shadow-xl z-50 min-w-[200px]">
+                   <button
+                     onClick={() => {
+                       onUpdateExcelCRM('excel');
+                       setShowExcelCRMMenu(false);
+                     }}
+                     className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors first:rounded-t-lg border-b border-gray-200"
+                   >
+                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                     </svg>
+                     <span className="font-medium text-gray-700">Update Excel</span>
+                   </button>
+                   <button
+                     onClick={() => {
+                       onUpdateExcelCRM('crm');
+                       setShowExcelCRMMenu(false);
+                     }}
+                     className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-200"
+                   >
+                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                     </svg>
+                     <span className="font-medium text-gray-700">Update CRM</span>
+                   </button>
+                   <button
+                     onClick={() => {
+                       onUpdateExcelCRM('both');
+                       setShowExcelCRMMenu(false);
+                     }}
+                     className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors last:rounded-b-lg"
+                   >
+                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                     </svg>
+                     <span className="font-medium text-gray-700">Update Both</span>
+                   </button>
+                 </div>
+               )}
+             </div>
+           )}
+
+           {/* Email Button with Dropdown */}
+           {(onSendEmailToClient || onSendEmailToManager) && (
+             <div className="relative" ref={emailMenuRef}>
+               <button
+                 onClick={() => setShowEmailMenu(!showEmailMenu)}
+                 className="flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 bg-blue-600 border border-transparent text-white hover:bg-blue-700 focus:ring-blue-500"
+                 title="Send Email"
+               >
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                 </svg>
+                 Email
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                 </svg>
+               </button>
+               {showEmailMenu && (
+                 <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-white border-2 border-gray-200 rounded-lg shadow-xl z-50 min-w-[200px]">
+                   {onSendEmailToClient && (
+                     <button
+                       onClick={() => {
+                         onSendEmailToClient();
+                         setShowEmailMenu(false);
+                       }}
+                       className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors first:rounded-t-lg border-b border-gray-200"
+                     >
+                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                       </svg>
+                       <span className="font-medium text-gray-700">Email Client</span>
+                     </button>
+                   )}
+                   {onSendEmailToManager && (
+                     <button
+                       onClick={() => {
+                         onSendEmailToManager();
+                         setShowEmailMenu(false);
+                       }}
+                       className="w-full text-left px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors last:rounded-b-lg"
+                     >
+                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                       </svg>
+                       <span className="font-medium text-gray-700">Email Manager</span>
+                     </button>
+                   )}
+                 </div>
+               )}
+             </div>
+           )}
+         </div>
       </div>
 
       <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2">
@@ -167,6 +342,19 @@ const RecommendationsCard: React.FC<RecommendationsCardProps> = ({ recommendatio
             </svg>
             <p className="mt-2 text-gray-600 font-semibold">Awaiting Recommendations</p>
             <p className="mt-1 text-gray-500 text-sm">Start a call to get AI-powered suggestions.</p>
+            <div className="mt-6 flex justify-center">
+              <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-4 max-w-md">
+                <div className="flex items-start gap-3">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 00-2 0v4a1 1 0 00.553.894l3 1.5a1 1 0 00.894-1.788L11 9.382V6z" clipRule="evenodd" />
+                  </svg>
+                  <div className="text-left">
+                    <p className="text-sm font-bold text-amber-900">💰 Partner Spotlight Reminder</p>
+                    <p className="text-xs text-amber-800 mt-1">Partner spotlight = higher commissions — mention them even if they're #2 or #3.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

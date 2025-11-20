@@ -51,20 +51,48 @@ class GeminiAudioProcessor:
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
         try:
+            # Validate file exists and is readable
+            file_size = os.path.getsize(audio_path)
+            if file_size == 0:
+                raise ValueError(f"Audio file is empty: {audio_path}")
+            
+            # Check file extension
+            file_ext = Path(audio_path).suffix.lower()
+            supported_extensions = ['.mp3', '.wav', '.m4a', '.ogg', '.webm', '.flac']
+            if file_ext not in supported_extensions:
+                raise ValueError(
+                    f"Unsupported audio format '{file_ext}'. "
+                    f"Supported formats: {', '.join(supported_extensions)}"
+                )
+            
             # Upload audio file to Gemini using new client API
-            audio_file = self.client.files.upload(file=audio_path)
+            try:
+                audio_file = self.client.files.upload(file=audio_path)
+            except Exception as upload_error:
+                error_msg = str(upload_error)
+                if 'invalid' in error_msg.lower() or 'format' in error_msg.lower() or 'unsupported' in error_msg.lower():
+                    raise ValueError(
+                        f"Unsupported audio format. Gemini API rejected the file format '{file_ext}'. "
+                        f"Please convert your audio file to MP3, WAV, M4A, OGG, WebM, or FLAC format. "
+                        f"Original error: {error_msg}"
+                    )
+                raise
 
             # Wait for file to become ACTIVE
             import time
             max_wait = 30  # seconds
             waited = 0
-            while audio_file.state.name != 'ACTIVE' and waited < max_wait:
+            file_state = getattr(audio_file.state, 'name', None) if hasattr(audio_file, 'state') else None
+            while file_state != 'ACTIVE' and waited < max_wait:
                 time.sleep(1)
                 waited += 1
                 audio_file = self.client.files.get(name=audio_file.name)
+                file_state = getattr(audio_file.state, 'name', None) if hasattr(audio_file, 'state') else None
             
-            if audio_file.state.name != 'ACTIVE':
-                raise RuntimeError(f"File did not become ACTIVE after {max_wait}s (state: {audio_file.state.name})")
+            file_state = getattr(audio_file.state, 'name', None) if hasattr(audio_file, 'state') else None
+            if file_state != 'ACTIVE':
+                state_str = str(file_state) if file_state is not None else 'unknown'
+                raise RuntimeError(f"File did not become ACTIVE after {max_wait}s (state: {state_str})")
 
             # Generate content with audio + extraction prompt
             extraction_prompt = self._create_extraction_prompt(language)
@@ -78,7 +106,9 @@ class GeminiAudioProcessor:
                 )
             )
 
-            result_text = response.text
+            result_text = response.text if hasattr(response, 'text') and response.text else None
+            if not result_text:
+                raise ValueError("Gemini API returned empty response")
             
             # Clean up markdown code blocks if present
             if result_text.strip().startswith('```'):
@@ -104,22 +134,20 @@ class GeminiAudioProcessor:
         except Exception as e:
             raise RuntimeError(f"Failed to process audio: {str(e)}") from e
 
-    def process_text_input(self, text: str) -> Dict[str, Any]:
+    def process_text_input(self, text: str, language: str = 'english') -> Dict[str, Any]:
         """
         Process text input (for testing without audio)
 
         Args:
             text: Client intake conversation text
+            language: Language constraint ('english', 'hindi', 'spanish')
 
         Returns:
             Dict with structured client requirements
         """
-        print("\n[PROCESSING] Text input (test mode)")
-        print(f"[MODEL] gemini-2.0-flash-exp")
-
         try:
-            extraction_prompt = self._create_extraction_prompt()
-            full_prompt = f"{extraction_prompt}\n\nCLIENT CONVERSATION:\n{text}"
+            extraction_prompt = self._create_extraction_prompt(language)
+            full_prompt = extraction_prompt + "\n\nCLIENT CONVERSATION:\n" + text
 
             response = self.client.models.generate_content(
                 model=self.model_name,
@@ -130,7 +158,10 @@ class GeminiAudioProcessor:
                 )
             )
 
-            result_text = response.text
+            result_text = response.text if hasattr(response, 'text') and response.text else None
+            if not result_text:
+                raise ValueError("Gemini API returned empty response")
+            
             parsed = json.loads(result_text)
 
             # Handle if Gemini returns a list instead of dict
@@ -139,12 +170,10 @@ class GeminiAudioProcessor:
             else:
                 client_requirements = parsed
 
-            print("[SUCCESS] Text processed successfully\n")
             return client_requirements
 
         except Exception as e:
-            print(f"[ERROR] Failed to process text: {str(e)}")
-            raise
+            raise RuntimeError(f"Failed to process text: {str(e)}") from e
 
     def _create_extraction_prompt(self, language: str = 'english') -> str:
         """Create the extraction prompt for Gemini"""
@@ -156,8 +185,9 @@ class GeminiAudioProcessor:
         elif language.lower() == 'spanish':
             language_instruction = "\nLANGUAGE CONSTRAINT: Only process and respond in Spanish. Ignore any other languages spoken in the conversation."
 
-        return f"""
-You are analyzing a senior living client intake conversation (either audio or text).{language_instruction}
+        # Use regular string concatenation instead of f-string to avoid format specifier issues
+        prompt = """
+You are analyzing a senior living client intake conversation (either audio or text).""" + language_instruction + """
 Extract the following information and return it as JSON:
 
 {
@@ -199,7 +229,7 @@ CRITICAL RULES:
      * "Webster" = "14580"
      * "Penfield" = "14526"
      * "Greece" = "14626"
-     * "Downtown Rochester" or "central Rochester" = "14604"
+     * "Downtown Rochester" or "central Rochester" = "14604" (default to downtown)
      * "West Rochester" or "west side" = "14611"
      * "East Rochester" or "east side" = "14618"
      * "Rochester area" or "anywhere in Rochester" or just "Rochester" = "14604" (default to downtown)
@@ -211,6 +241,7 @@ CRITICAL RULES:
 
 Extract all available information from the conversation.
 """
+        return prompt
 
 
 def test_gemini_processor():

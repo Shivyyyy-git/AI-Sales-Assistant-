@@ -68,12 +68,13 @@ class RankingBasedRecommendationSystem:
         print("[SUCCESS] System initialized with Gemini 2.5 Flash")
         print("="*80)
 
-    def process_audio_file(self, audio_path: str, output_file: Optional[str] = None) -> dict:
+    def process_audio_file(self, audio_path: str, language: str = 'english', output_file: Optional[str] = None) -> dict:
         """
         Process an audio file and generate ranked recommendations
 
         Args:
             audio_path: Path to audio file
+            language: Language constraint ('english', 'hindi', 'spanish')
             output_file: Optional path to save results
 
         Returns:
@@ -100,7 +101,7 @@ class RankingBasedRecommendationSystem:
         # Step 1: Extract client requirements from audio using Gemini
         print("\n[PHASE 1] EXTRACTING CLIENT REQUIREMENTS (Gemini 2.5 Flash)")
         phase1_start = time.time()
-        client_data = self.audio_processor.process_audio_file(audio_path)
+        client_data = self.audio_processor.process_audio_file(audio_path, language)
         phase1_time = time.time() - phase1_start
         metrics['timings']['phase1_extraction'] = phase1_time
         metrics['api_calls'] += 1

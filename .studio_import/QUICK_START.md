@@ -21,6 +21,11 @@
 
 ## 🚀 How to Use
 
+### Opening the Experience
+
+1. On the hero screen choose **“Launch AI Sales Assistant”** to jump directly into the live dashboard.
+2. Or pick **“Product Vision & Playbook”** to review the strategy, roadmap, and partner-first business value before launching.
+
 ### Starting a Call
 
 1. **Select Language** (if not English)
@@ -39,7 +44,6 @@
 
 - **Pause/Resume**: Yellow pause button
 - **Transfer to Agent**: Purple "Transfer to Agent" button (switches to silent mode)
-- **Force Update**: Lightning bolt button to refresh recommendations
 - **End Call**: Red "End Call" button
 
 ### Language Enforcement
