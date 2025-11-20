@@ -1,401 +1,311 @@
 <div align="center">
 
-# 🏘️ AI Senior Living Placement Assistant
+# 🎯 AI Senior Living Placement Assistant
 
-**AI‑Powered Client Intake and Community Matching System**
+### *Transforming Senior Care Placement with Real-Time AI Intelligence*
 
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
-[![React](https://img.shields.io/badge/React-18+-61dafb.svg)](https://reactjs.org/)
-[![Gemini](https://img.shields.io/badge/Gemini-2.5%20Flash-orange.svg)](https://ai.google.dev/)
-[![Flask](https://img.shields.io/badge/Flask-3.0+-green.svg)](https://flask.palletsprojects.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![React](https://img.shields.io/badge/React-18+-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+[![Gemini AI](https://img.shields.io/badge/Gemini-2.5%20Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Flask](https://img.shields.io/badge/Flask-3.0+-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-*An intelligent recommendation system that processes real-time audio consultations or text inputs to match clients with the most suitable senior living communities using advanced AI and multi-dimensional ranking algorithms.*
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Status: Production](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)]()
 
 </div>
 
 ---
 
-## 📋 Table of Contents
+## 🌟 **The Problem We Solve**
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Project Team](#-project-team)
-- [Quick Start](#-quick-start)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [System Architecture](#-system-architecture)
-- [Ranking System](#-ranking-system)
-- [API Documentation](#-api-documentation)
-- [Configuration](#-configuration)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
+Finding the perfect senior living community is **stressful, time-consuming, and emotionally draining**. Traditional placement processes involve:
+- ❌ Hours of manual research
+- ❌ Inconsistent matching criteria  
+- ❌ Limited transparency in recommendations
+- ❌ Delayed responses to urgent needs
+- ❌ Human error in requirement extraction
+
+**We've built something different.**
 
 ---
 
-## 🎯 Overview
+## ✨ **What Makes Us Different**
 
-The **AI Senior Living Placement Assistant** is a comprehensive solution designed to streamline the senior living placement process. It combines cutting-edge AI technology with sophisticated ranking algorithms to provide accurate, explainable recommendations for senior living communities.
+### 🚀 **Real-Time Intelligence**
+Have a **live conversation** with clients and watch as our AI extracts requirements, analyzes communities, and delivers ranked recommendations **in real-time**—no waiting, no delays.
 
-### What It Does
+### 🧠 **8-Dimensional AI Analysis**
+We don't just match on price and location. Our system evaluates communities across **8 sophisticated dimensions**:
+- 💰 Business Value & Commission Optimization
+- 💵 Total Cost Analysis (including hidden fees)
+- 📍 Real Geocoded Distance Calculations
+- ⏰ Timeline & Availability Matching
+- 🏠 Amenity & Lifestyle Compatibility
+- 👥 Couple-Friendly Options
+- 💡 Budget Efficiency Scoring
+- 🎯 Holistic Fit Assessment
 
-1. **Real-Time Audio Processing**: Captures and processes live consultations using Gemini Live API
-2. **Intelligent Extraction**: Uses Gemini 2.5 Flash to extract client requirements from audio or text
-3. **Multi-Dimensional Ranking**: Evaluates communities across 8 dimensions (business value, cost, distance, availability, amenities, etc.)
-4. **Smart Recommendations**: Always provides exactly 5 ranked recommendations with detailed explanations
-5. **CRM Integration**: Automatically pushes results to Google Sheets for tracking and analytics
+### 🎯 **Deterministic & Explainable**
+Every recommendation comes with **detailed reasoning**. Same input = same output. No black boxes, no guesswork—just transparent, auditable results.
 
-### Technology Stack
-
-- **Backend**: Python 3.9+, Flask, SocketIO
-- **Frontend**: React 18+, TypeScript, Vite
-- **AI**: Google Gemini 2.5 Flash Live API
-- **Data Processing**: Pandas, NumPy
-- **CRM**: Google Sheets API
-- **Styling**: Tailwind CSS
-
----
-
-## ✨ Key Features
-
-### 🎤 Real-Time Audio Processing
-- **Live Transcription**: Real-time speech-to-text using Gemini Live API
-- **Multi-Language Support**: English and Spanish (Hindi coming soon)
-- **Audio File Upload**: Process pre-recorded consultations (MP3, WAV, M4A, OGG, WebM, FLAC)
-- **Noise Filtering**: Advanced audio processing pipeline with filters and compression
-
-### 🤖 AI-Powered Intelligence
-- **Smart Extraction**: Automatically extracts client requirements (budget, care level, timeline, location, special needs)
-- **Contextual Understanding**: Understands nuanced requirements and preferences
-- **Deterministic Output**: Temperature=0.0 ensures consistent results for the same input
-
-### 📊 Advanced Ranking System
-- **8-Dimension Analysis**: 
-  - Business Value (commission rates, willingness scores)
-  - Total Cost (monthly fees + amortized upfront costs)
-  - Distance (geocoded ZIP-to-ZIP calculations)
-  - Budget Efficiency (utilization percentage)
-  - Couple Friendliness (second person fees)
-  - Availability Match (timeline compatibility)
-  - Amenity & Lifestyle Fit (pet-friendly, enhanced services, etc.)
-  - Holistic Fit (overall compatibility)
-- **Weighted Borda Count**: Combines all dimensions into a single ranked score
-- **Always 5 Recommendations**: Consistent output for CRM integration
-
-### 💼 Business Features
-- **Partner Spotlight**: Highlights partner communities for higher commissions
-- **CRM Integration**: Automatic push to Google Sheets (consultations, recommendations, analytics)
-- **Email Integration**: Send recommendations to clients or managers
-- **Comparison Tool**: Side-by-side comparison of selected communities
-- **Call History**: Track all consultations and outcomes
-
-### 🎨 User Experience
-- **Modern UI**: Beautiful, responsive design with Tailwind CSS
-- **Live Dashboard**: Real-time updates during consultations
-- **Interactive Maps**: Visual location display for communities
-- **Client Profiles**: Comprehensive client information management
-- **Database Management**: Add, edit, and manage community database via UI
+### 🌍 **Multi-Language Support**
+Break down language barriers. Currently supports **English** and **Spanish**, with **Hindi** coming soon.
 
 ---
 
-## 👥 Project Team
+## 🎬 **See It In Action**
 
-**Project Team:**
-- Shivam Sharma
-- Ritwik Agrawal
-- Manu Jain
-- Yu Chen Lin (Ryan)
-
-**Faculty Advisor / Mentor:**
-- Professor Elizabeth Mohr
-
-**Client Partner:**
-- Neil Russell, Culina Health
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- **Python 3.9+** ([Download](https://www.python.org/downloads/))
-- **Node.js 18+ and npm** ([Download](https://nodejs.org/))
-- **Gemini API Key** ([Get one here](https://ai.google.dev/))
-
-### One-Command Start (Mac/Linux)
-
-```bash
-chmod +x START.sh
-./START.sh
+```
+┌─────────────────────────────────────────────────────────────┐
+│  👤 Consultant: "Hi, I'm calling about senior living..."    │
+│                                                             │
+│  🤖 AI Assistant: [Listening... Analyzing...]             │
+│                                                             │
+│  📊 Dashboard Updates:                                      │
+│     ✓ Care Level: Assisted Living                           │
+│     ✓ Budget: $5,500/month                                  │
+│     ✓ Timeline: Immediate                                  │
+│     ✓ Location: ZIP 14618                                  │
+│                                                             │
+│  🎯 Top 5 Recommendations Generated                        │
+│     → Ranked by 8-dimensional analysis                     │
+│     → Detailed explanations provided                       │
+│     → Ready for client review                               │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### One-Command Start (Windows)
+**Average Processing Time:** ~79 seconds from conversation to ranked recommendations
 
+---
+
+## 🏗️ **Architecture Overview**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    🎨 Modern React Frontend                 │
+│  • Real-time audio capture & streaming                     │
+│  • Live transcription display                              │
+│  • Interactive dashboard & recommendations                 │
+│  • Beautiful, responsive UI (Tailwind CSS)                │
+└────────────────────┬────────────────────────────────────────┘
+                     │ WebSocket (SocketIO)
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│              ⚡ Flask Backend (Python)                      │
+│  • Real-time WebSocket communication                       │
+│  • Audio processing pipeline                               │
+│  • API endpoint management                                 │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│         🤖 Google Gemini 2.5 Flash Live API                │
+│  • Real-time speech-to-text                                │
+│  • Intelligent requirement extraction                       │
+│  • Contextual understanding                                 │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│            🔍 Smart Filtering Engine                       │
+│  • Care level matching                                     │
+│  • Budget compatibility                                     │
+│  • Timeline alignment                                       │
+│  • Enhanced/Enriched services                             │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│        📊 8-Dimension Ranking System                        │
+│                                                             │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │ Rule-Based   │  │ Rule-Based   │  │ AI-Powered   │     │
+│  │ Rankings     │  │ Rankings     │  │ Rankings     │     │
+│  │ (5 dims)     │  │ (continued)  │  │ (3 dims)     │     │
+│  └──────────────┘  └──────────────┘  └──────────────┘     │
+│                                                             │
+│  → Weighted Borda Count Aggregation                        │
+│  → Always 5 Ranked Recommendations                          │
+└────────────────────┬────────────────────────────────────────┘
+                     │
+                     ▼
+┌─────────────────────────────────────────────────────────────┐
+│            📈 CRM Integration (Google Sheets)               │
+│  • Automatic consultation logging                          │
+│  • Recommendation tracking                                 │
+│  • Performance analytics                                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🚀 **Quick Start**
+
+### **Prerequisites**
+
+- 🐍 **Python 3.9+** ([Download](https://www.python.org/downloads/))
+- 📦 **Node.js 18+** ([Download](https://nodejs.org/))
+- 🔑 **Gemini API Key** ([Get one here](https://ai.google.dev/))
+
+### **⚡ One-Command Setup**
+
+**Mac/Linux:**
+```bash
+chmod +x START.sh && ./START.sh
+```
+
+**Windows:**
 ```bash
 START.bat
 ```
 
-### Manual Start
+### **📝 Manual Setup**
 
-**Backend:**
-```bash
-# Activate virtual environment
-source venv/bin/activate  # Mac/Linux
-# OR
-venv\Scripts\activate  # Windows
+<details>
+<summary><b>Click to expand detailed setup instructions</b></summary>
 
-# Install dependencies (first time only)
-pip install -r requirements.txt
-
-# Start backend server
-python app.py
-```
-
-**Frontend:**
-```bash
-cd .studio_import
-npm install  # First time only
-npm run dev
-```
-
-**Access the Application:**
-- Frontend: http://localhost:3000 (Use this!)
-- Backend API: http://localhost:5050 (Internal only)
-
----
-
-## 📦 Installation
-
-### Step 1: Clone Repository
-
+#### **1. Clone the Repository**
 ```bash
 git clone https://github.com/Shivyyyy-git/AI-Sales-Assistant-.git
 cd senior-community-recom-engine-1
 ```
 
-### Step 2: Backend Setup
-
+#### **2. Backend Setup**
 ```bash
 # Create virtual environment
 python3 -m venv venv
 
-# Activate virtual environment
-source venv/bin/activate  # Mac/Linux
-venv\Scripts\activate  # Windows
+# Activate (Mac/Linux)
+source venv/bin/activate
 
-# Install Python dependencies
+# Activate (Windows)
+venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### Step 3: Frontend Setup
-
+#### **3. Frontend Setup**
 ```bash
 cd .studio_import
 npm install
 ```
 
-### Step 4: Environment Configuration
-
-Create a `.env` file in the root directory:
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and add your credentials:
-
+#### **4. Environment Configuration**
+Create `.env` file:
 ```env
-# Required
-GEMINI_API_KEY=your_gemini_api_key_here
-
-# Optional - For Google Sheets CRM integration
-GOOGLE_SPREADSHEET_ID=your_spreadsheet_id
-GOOGLE_SERVICE_ACCOUNT_FILE=path/to/service-account.json
+GEMINI_API_KEY=your_api_key_here
 SECRET_KEY=your_secret_key_here
 ALLOWED_ORIGINS=http://localhost:3000
+
+# Optional: Google Sheets CRM
+GOOGLE_SPREADSHEET_ID=your_spreadsheet_id
+GOOGLE_SERVICE_ACCOUNT_FILE=path/to/service-account.json
 ```
 
-### Step 5: Run the Application
-
-Use the startup scripts (`START.sh` or `START.bat`) or follow the manual start instructions above.
-
----
-
-## 💻 Usage
-
-### Web Interface (Recommended)
-
-1. **Start the application** using `START.sh` or `START.bat`
-2. **Open your browser** to http://localhost:3000
-3. **Launch AI Placement Assistant** from the landing page
-4. **Start a call** or **upload an audio file**
-5. **View recommendations** in real-time as the conversation progresses
-
-### Command-Line Interface
-
-Process an audio file:
-
+#### **5. Run the Application**
 ```bash
-python run_consultation.py --audio "audio-files/Transcript 1 (Margaret Thompson).m4a"
+# Terminal 1: Backend
+python app.py
+
+# Terminal 2: Frontend
+cd .studio_import && npm run dev
 ```
 
-Process without pushing to CRM (testing):
+**Access:** http://localhost:3000 🎉
 
-```bash
-python run_consultation.py --audio "path/to/audio.m4a" --no-push
-```
-
-### Python API
-
-```python
-from main_pipeline_ranking import RankingBasedRecommendationSystem
-from google_sheets_integration import push_to_crm
-
-# Initialize system
-system = RankingBasedRecommendationSystem()
-
-# Process audio file
-result = system.process_audio_file(
-    audio_path="audio-files/consultation.m4a",
-    output_file="output/result.json"
-)
-
-# Push to Google Sheets CRM
-crm_result = push_to_crm(result)
-print(f"Consultation #{crm_result['consultation_id']} added to CRM")
-```
+</details>
 
 ---
 
-## 🏗️ System Architecture
+## 💡 **Key Features Deep Dive**
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    USER INTERFACE                            │
-│  (React Frontend - Real-time Audio/Text Input)              │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│              FLASK BACKEND (SocketIO)                        │
-│  • Real-time WebSocket communication                        │
-│  • Audio streaming to Gemini Live API                       │
-│  • Request/response handling                                 │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│         GEMINI LIVE API / AUDIO PROCESSOR                   │
-│  • Real-time transcription                                  │
-│  • Client requirement extraction                            │
-│  • Temperature=0.0 for deterministic output                │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│              HARD FILTER ENGINE                              │
-│  • Care level match                                         │
-│  • Budget compatibility                                     │
-│  • Timeline fit                                             │
-│  • Enhanced/Enriched services                               │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│         8-DIMENSION RANKING ENGINE                          │
-│                                                             │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │ Rule-Based   │  │ Rule-Based   │  │ AI-Powered   │     │
-│  │ (5 dims)     │  │ (continued)  │  │ (3 dims)     │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-│                                                             │
-│  • Business Value  • Budget Efficiency  • Availability      │
-│  • Total Cost      • Couple Friendly    • Amenities        │
-│  • Distance                              • Holistic Fit    │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│         WEIGHTED BORDA COUNT AGGREGATION                     │
-│  • Combines all 8 dimensions                                │
-│  • Produces final ranked score                              │
-│  • Always returns top 5 recommendations                     │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│              OUTPUT & CRM INTEGRATION                        │
-│  • JSON recommendations with explanations                   │
-│  • Google Sheets push (optional)                            │
-│  • Email integration                                        │
-└─────────────────────────────────────────────────────────────┘
-```
+### 🎤 **Real-Time Audio Processing**
+- **Live Transcription**: Watch conversations transcribed in real-time
+- **Multi-Format Support**: Upload MP3, WAV, M4A, OGG, WebM, FLAC files
+- **Advanced Noise Filtering**: Professional audio processing pipeline
+- **Language Flexibility**: English, Spanish (Hindi coming soon)
 
-### Performance Metrics
+### 🤖 **AI-Powered Intelligence**
+- **Smart Extraction**: Automatically identifies care level, budget, timeline, location, special needs
+- **Contextual Understanding**: Understands nuanced requirements ("near my daughter" → location inference)
+- **Deterministic Output**: Temperature=0.0 ensures consistent, reproducible results
 
-| Metric | Value |
-|--------|-------|
-| **Average E2E Time** | ~79 seconds |
-| **Token Throughput** | ~89 tokens/sec |
-| **API Calls per Run** | 4 (1 extraction + 3 ranking) |
-| **Recommendations** | Always 5 |
-| **Optimization** | 70% reduction in API calls (pre-filtering) |
+### 📊 **Advanced Ranking System**
+
+Our **8-dimension hybrid ranking** combines:
+
+**Rule-Based Dimensions (5):**
+1. **Business Value** - Commission rates × willingness scores
+2. **Total Cost** - Monthly fees + amortized upfront costs
+3. **Distance** - Real geocoded ZIP-to-ZIP calculations
+4. **Budget Efficiency** - Utilization percentage analysis
+5. **Couple Friendliness** - Second person fee comparison
+
+**AI-Powered Dimensions (3):**
+6. **Availability Match** - Timeline compatibility analysis
+7. **Amenity & Lifestyle** - Semantic matching of needs vs. features
+8. **Holistic Fit** - Overall compatibility assessment
+
+**Result:** Weighted Borda Count aggregation → Always 5 ranked recommendations with detailed explanations
+
+### 💼 **Business Features**
+- ⭐ **Partner Spotlight** - Highlights partner communities for commission optimization
+- 📊 **CRM Integration** - Automatic Google Sheets push (consultations, recommendations, analytics)
+- 📧 **Email Integration** - Send recommendations to clients or managers
+- 🔄 **Comparison Tool** - Side-by-side community comparison
+- 📜 **Call History** - Track all consultations and outcomes
 
 ---
 
-## 📊 Ranking System
+## 📈 **Performance Metrics**
 
-### Hybrid Scoring Methodology
-
-The system combines **deterministic (rule-based)** and **AI-powered** scoring:
-
-#### Deterministic Dimensions (5)
-
-These use pure mathematical formulas with **zero randomness**:
-
-1. **Business Value**: `willingness_score × commission_rate`
-2. **Total Cost**: `monthly_fee + amortized_upfront_costs`
-3. **Distance**: Geodesic distance (ZIP-to-ZIP via GeoPy)
-4. **Budget Efficiency**: `(monthly_fee / client_budget) × 100`
-5. **Couple Friendliness**: Comparison of 2nd person fees
-
-#### AI-Powered Dimensions (3)
-
-These use **Gemini 2.5 Flash with temperature=0.0**:
-
-6. **Availability Match**: Timeline compatibility analysis
-7. **Amenity & Lifestyle**: Semantic matching of needs vs. features
-8. **Holistic Fit**: Overall compatibility considering all factors
-
-### Rank Aggregation
-
-**Weighted Borda Count Formula:**
-```
-combined_score = Σ (rank_in_dimension × weight_of_dimension)
-```
-
-Lower scores = better recommendations.
-
-### Determinism Guarantee
-
-- **Temperature=0.0**: Same input = same output every time
-- **Structured JSON**: Forces consistent data extraction
-- **Reproducible Rankings**: Can audit and trace every recommendation
+| Metric | Value | Why It Matters |
+|--------|-------|----------------|
+| **Average E2E Time** | ~79 seconds | From conversation to ranked recommendations |
+| **Token Throughput** | ~89 tokens/sec | Fast AI processing |
+| **API Calls per Run** | 4 calls | Optimized (1 extraction + 3 ranking) |
+| **Recommendations** | Always 5 | Consistent CRM integration |
+| **Optimization** | 70% reduction | Pre-filtering reduces API calls |
 
 ---
 
-## 🔌 API Documentation
+## 🛠️ **Technology Stack**
 
-### Backend Endpoints
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Frontend** | React 18+, TypeScript, Vite | Modern, type-safe UI |
+| **Styling** | Tailwind CSS | Beautiful, responsive design |
+| **Backend** | Python 3.9+, Flask, SocketIO | Real-time communication |
+| **AI** | Google Gemini 2.5 Flash Live | Speech-to-text & intelligence |
+| **Data** | Pandas, NumPy | Community data processing |
+| **CRM** | Google Sheets API | Automatic tracking |
+| **Geocoding** | GeoPy, OpenStreetMap | Real distance calculations |
+
+---
+
+## 📚 **Documentation**
+
+- 📖 **[CLIENT_SETUP.md](CLIENT_SETUP.md)** - Detailed setup guide for clients
+- 📊 **[RANKING_SYSTEM_README.md](RANKING_SYSTEM_README.md)** - Deep dive into ranking algorithms
+- 📈 **[GOOGLE_SHEETS_SETUP.md](GOOGLE_SHEETS_SETUP.md)** - CRM integration guide
+
+---
+
+## 🔌 **API Reference**
+
+### **Backend Endpoints**
 
 #### `POST /api/process-audio`
-Process an uploaded audio file.
+Process uploaded audio file and return recommendations.
 
 **Request:**
-- `Content-Type: multipart/form-data`
-- `audio`: Audio file (MP3, WAV, M4A, OGG, WebM, FLAC)
-- `language`: Language code (optional, default: 'english')
+```bash
+curl -X POST http://localhost:5050/api/process-audio \
+  -F "audio=@consultation.m4a" \
+  -F "language=english"
+```
 
 **Response:**
 ```json
@@ -408,65 +318,61 @@ Process an uploaded audio file.
     "timeline": "immediate",
     "location_preference": "14526"
   },
-  "recommendations": [...],
-  "metrics": {...}
+  "recommendations": [
+    {
+      "final_rank": 1,
+      "community_name": "Community 31",
+      "combined_rank_score": 37.0,
+      "key_metrics": {
+        "monthly_fee": 3528.0,
+        "distance_miles": 3.83,
+        "est_waitlist": "Available"
+      },
+      "explanations": {
+        "holistic_reason": "Great option: Good cost and immediately available..."
+      }
+    }
+  ],
+  "metrics": {
+    "total_time": 72.65,
+    "total_cost": 0.004288
+  }
 }
 ```
 
 #### `POST /api/process-text`
 Process text consultation input.
 
-**Request:**
-```json
-{
-  "text": "Client consultation transcript...",
-  "language": "english"
-}
-```
-
 #### `GET /api/communities`
-Get all communities from database.
+Retrieve all communities from database.
 
 #### `POST /api/communities`
-Add a new community to database.
+Add new community to database.
 
-#### `PUT /api/communities/:id`
-Update an existing community.
+### **WebSocket Events**
 
-#### `DELETE /api/communities/:id`
-Delete a community.
-
-### WebSocket Events
-
-#### `start_call`
-Start a live audio consultation.
-
-#### `audio_chunk`
-Send audio data chunk (base64 encoded).
-
-#### `end_call`
-End the current call.
-
-#### `pause_call` / `resume_call`
-Pause/resume audio processing.
+- `start_call` - Begin live audio consultation
+- `audio_chunk` - Send audio data (base64 encoded)
+- `end_call` - End current call
+- `pause_call` / `resume_call` - Control audio processing
 
 ---
 
-## ⚙️ Configuration
+## ⚙️ **Configuration**
 
-### Environment Variables
+### **Environment Variables**
 
 | Variable | Required | Description |
-|----------|----------|------------|
-| `GEMINI_API_KEY` | Yes | Your Gemini API key |
-| `GOOGLE_SPREADSHEET_ID` | No | Google Sheets ID for CRM |
-| `GOOGLE_SERVICE_ACCOUNT_FILE` | No | Path to service account JSON |
-| `SECRET_KEY` | Yes | Flask secret key |
-| `ALLOWED_ORIGINS` | Yes | CORS allowed origins |
+|----------|----------|-------------|
+| `GEMINI_API_KEY` | ✅ Yes | Your Gemini API key |
+| `SECRET_KEY` | ✅ Yes | Flask secret key |
+| `ALLOWED_ORIGINS` | ✅ Yes | CORS allowed origins |
+| `GOOGLE_SPREADSHEET_ID` | ❌ No | Google Sheets ID for CRM |
+| `GOOGLE_SERVICE_ACCOUNT_FILE` | ❌ No | Service account JSON path |
 
-### Ranking Weights
+### **Custom Ranking Weights**
 
-Customize ranking priorities in `main_pipeline_ranking.py`:
+Adjust priorities in `main_pipeline_ranking.py`:
 
 ```python
 custom_weights = {
@@ -481,100 +387,79 @@ custom_weights = {
 }
 ```
 
-### Database Schema
+---
 
-Required columns in `DataFile_students_OPTIMIZED.xlsx`:
+## 🐛 **Troubleshooting**
 
-- `CommunityID`: Unique identifier
-- `Care Level`: Independent/Assisted/Memory Care
-- `Monthly Fee`: Base monthly rate
-- `ZIP`: 5-digit ZIP code
-- `Work with Placement?`: Boolean
-- `Contract Rate`: Commission percentage
-- `Est. Waitlist`: Availability status
-- `Enhanced`: Enhanced services available
-- `Enriched`: Enriched programming available
+<details>
+<summary><b>Common Issues & Solutions</b></summary>
+
+### **Audio Not Being Picked Up**
+- ✅ Check microphone permissions in browser
+- ✅ Ensure AudioContext is resumed (click anywhere on page)
+- ✅ Verify audio constraints in browser console
+
+### **Transcription Lag or Breakage**
+- ✅ Check internet connection
+- ✅ Verify Gemini API key is valid
+- ✅ Check browser console for WebSocket errors
+
+### **Audio File Upload Fails**
+- ✅ Ensure file format is supported (MP3, WAV, M4A, OGG, WebM, FLAC)
+- ✅ Check file size (max 50MB)
+- ✅ Verify file is not corrupted
+
+### **API Timeout Errors**
+- ✅ System has built-in retry logic (3 attempts)
+- ✅ Check internet connection
+- ✅ Verify API key has sufficient quota
+
+### **Port Already in Use**
+- ✅ Backend: Change port in `app.py` (default: 5050)
+- ✅ Frontend: Change port in `vite.config.ts` (default: 3000)
+
+</details>
 
 ---
 
-## 🔍 Troubleshooting
+## 👥 **Project Team**
 
-### Common Issues
+<div align="center">
 
-**Audio Not Being Picked Up**
-- Check microphone permissions in browser
-- Ensure AudioContext is resumed (click anywhere on page)
-- Verify audio constraints in browser console
+| Role | Name |
+|------|------|
+| **Project Team** | Shivam Sharma, Ritwik Agrawal, Manu Jain, Yu Chen Lin (Ryan) |
+| **Faculty Advisor** | Professor Elizabeth Mohr |
+| **Client Partner** | Neil Russell, Culina Health |
 
-**Transcription Lag or Breakage**
-- Check internet connection
-- Verify Gemini API key is valid
-- Check browser console for WebSocket errors
-
-**Audio File Upload Fails**
-- Ensure file format is supported (MP3, WAV, M4A, OGG, WebM, FLAC)
-- Check file size (max 50MB)
-- Verify file is not corrupted
-
-**API Timeout Errors**
-- System has built-in retry logic (3 attempts)
-- Check internet connection
-- Verify API key has sufficient quota
-
-**Google Sheets Push Fails**
-- Verify `.env` has correct `GOOGLE_SPREADSHEET_ID`
-- Check spreadsheet is shared with service account email
-- Ensure Google Sheets API is enabled in Google Cloud Console
-
-**Port Already in Use**
-- Backend: Change port in `app.py` (default: 5050)
-- Frontend: Change port in `vite.config.ts` (default: 3000)
-
-### Debug Mode
-
-Enable verbose logging:
-
-```python
-# In app.py
-import logging
-logging.basicConfig(level=logging.DEBUG)
-```
+</div>
 
 ---
 
-## 📚 Additional Documentation
+## 🤝 **Contributing**
 
-- **[CLIENT_SETUP.md](CLIENT_SETUP.md)**: Detailed setup instructions for clients
-- **[RANKING_SYSTEM_README.md](RANKING_SYSTEM_README.md)**: In-depth ranking system documentation
-- **[GOOGLE_SHEETS_SETUP.md](GOOGLE_SHEETS_SETUP.md)**: Google Sheets CRM integration guide
+We welcome contributions! Here's how you can help:
 
----
+1. 🍴 **Fork** the repository
+2. 🌿 **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. 💾 **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. 📤 **Push** to the branch (`git push origin feature/amazing-feature`)
+5. 🔄 **Open** a Pull Request
 
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Code Style
-
+### **Code Style**
 - **Python**: Follow PEP 8
 - **TypeScript/React**: Use ESLint and Prettier
 - **Commits**: Use descriptive commit messages
 
 ---
 
-## 📄 License
+## 📄 **License**
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## 🙏 **Acknowledgments**
 
 - **Google Gemini Team** - For the powerful Gemini 2.5 Flash model
 - **OpenStreetMap Nominatim** - For geocoding services
@@ -582,19 +467,23 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🔗 Links
+## 🔗 **Useful Links**
 
-- [Gemini API Documentation](https://ai.google.dev/gemini-api/docs)
-- [React Documentation](https://react.dev/)
-- [Flask Documentation](https://flask.palletsprojects.com/)
-- [Project Repository](https://github.com/Shivyyyy-git/AI-Sales-Assistant-)
+- 🔵 [Gemini API Documentation](https://ai.google.dev/gemini-api/docs)
+- ⚛️ [React Documentation](https://react.dev/)
+- 🐍 [Flask Documentation](https://flask.palletsprojects.com/)
+- 📦 [Project Repository](https://github.com/Shivyyyy-git/AI-Sales-Assistant-)
 
 ---
 
 <div align="center">
 
+### **🌟 Star this repo if you find it helpful!**
+
 **Built with ❤️ by the AI Senior Living Placement Assistant Team**
 
 *Making senior living placement smarter, faster, and more accurate.*
+
+[⬆ Back to Top](#-ai-senior-living-placement-assistant)
 
 </div>
