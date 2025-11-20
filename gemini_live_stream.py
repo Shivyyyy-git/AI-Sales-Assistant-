@@ -72,7 +72,7 @@ class GeminiLiveStream:
                 pass
         
         self.session = await self.client.aio.live.connect(
-            model='gemini-2.0-flash-exp',
+            model='gemini-2.5-flash-live-preview',
             config=types.LiveConnectConfig(**config_dict)
         )
         
@@ -109,16 +109,9 @@ class GeminiLiveStream:
             if hasattr(sc, 'input_transcription') and sc.input_transcription:
                 transcript_text = sc.input_transcription.text
                 
-                # STRICT FILTER: Only allow English characters, numbers, and basic punctuation
-                # Block any non-ASCII characters (Hindi, Spanish accents, etc.)
-                import re
-                # Check if text contains non-English characters
-                if re.search(r'[^\x00-\x7F]', transcript_text):
-                    # Contains non-ASCII characters - likely Hindi or other language
-                    print(f"[LANGUAGE FILTER] Blocked non-English transcription: {transcript_text[:50]}...")
-                    # Return None to ignore this transcription
-                    return None
-                
+                # Multi-language support: Accept all Unicode characters
+                # The language is already constrained by input_audio_transcription language_code
+                # and system instruction, so we don't need to filter here
                 result['type'] = 'user_transcript'
                 result['text'] = transcript_text
                 return result

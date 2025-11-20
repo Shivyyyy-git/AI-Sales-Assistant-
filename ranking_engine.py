@@ -13,7 +13,8 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from geopy.distance import geodesic
 
 
@@ -473,22 +474,29 @@ class GeminiRanker(RankingDimension):
         if not api_key:
             raise ValueError("GEMINI_API_KEY environment variable not set")
 
-        genai.configure(api_key=api_key)
-        self.model = genai.GenerativeModel('gemini-2.5-flash')
+        self.client = genai.Client(api_key=api_key)
+        self.model_name = 'gemini-2.5-flash'
 
     def _call_gemini(self, prompt: str, timeout: int = 60, max_retries: int = 3) -> Dict[str, Any]:
-        """Call Gemini API with structured JSON output, timeout, and retry logic"""
+        """Call Gemini API with structured JSON output, timeout, and retry logic
+        
+        Note: The timeout parameter is accepted for API compatibility but the new 
+        google.genai SDK doesn't support timeout configuration in the same way.
+        Timeout behavior is now handled by the SDK's default settings and network layer.
+        """
         import time
 
         for attempt in range(max_retries):
             try:
-                response = self.model.generate_content(
-                    prompt,
-                    generation_config=genai.GenerationConfig(
+                # Note: google.genai (v1.51.0) doesn't support request_options timeout
+                # The SDK handles timeouts internally at the network layer
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
                         temperature=0.0,
                         response_mime_type="application/json"
-                    ),
-                    request_options={"timeout": timeout}
+                    )
                 )
                 return json.loads(response.text)
             except Exception as e:

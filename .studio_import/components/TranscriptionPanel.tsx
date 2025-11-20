@@ -71,16 +71,18 @@ const TranscriptionPanel: React.FC<TranscriptionPanelProps> = ({ entries, client
 
 
   return (
-    <div className="bg-white/80 backdrop-blur-md border border-gray-200/80 rounded-xl p-6 flex flex-col h-full min-h-0 shadow-sm">
-       <div className="flex items-center justify-between mb-4 flex-shrink-0">
+    <div className="bg-white/90 backdrop-blur-lg border-2 border-gray-200/60 rounded-2xl p-6 lg:p-7 flex flex-col h-full min-h-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
+       <div className="flex items-center justify-between mb-5 flex-shrink-0">
          <div className="flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-            <h2 className="text-xl font-bold text-gray-800">Conversation Stream</h2>
+            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+            </div>
+            <h2 className="text-xl lg:text-2xl font-bold text-gray-800">Conversation Stream</h2>
         </div>
       </div>
-      <div ref={scrollRef} className="relative flex-grow overflow-y-auto min-h-0 bg-gray-50/80 p-4 rounded-md border border-gray-200">
+      <div ref={scrollRef} className="relative flex-grow overflow-y-auto min-h-0 bg-gradient-to-b from-gray-50/90 to-gray-50/60 p-5 rounded-xl border-2 border-gray-200/40 shadow-inner">
         {userHasScrolledUp && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
                 <button 

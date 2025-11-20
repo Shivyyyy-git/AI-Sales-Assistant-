@@ -56,16 +56,6 @@ uploads/*
 output/*
 !output/.gitkeep
 
-# Node modules
-node_modules/
-.studio_import/node_modules/
-
-# Zip files (exclude distribution packages)
-*.zip
-
-# Temporary files
-~/
-
 # Google Sheets credentials
 *.json
 !package.json

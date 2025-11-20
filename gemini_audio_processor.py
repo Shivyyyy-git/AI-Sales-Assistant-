@@ -53,30 +53,60 @@ class GeminiAudioProcessor:
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
         print(f"\n[PROCESSING] Audio file: {audio_path}")
-        print(f"[MODEL] gemini-2.0-flash-exp")
+        print(f"[MODEL] {self.model_name}")
 
         try:
+            # Validate file exists and is readable
+            if not os.path.exists(audio_path):
+                raise FileNotFoundError(f"Audio file not found: {audio_path}")
+            
+            file_size = os.path.getsize(audio_path)
+            if file_size == 0:
+                raise ValueError(f"Audio file is empty: {audio_path}")
+            
+            # Check file extension
+            file_ext = Path(audio_path).suffix.lower()
+            supported_extensions = ['.mp3', '.wav', '.m4a', '.ogg', '.webm', '.flac']
+            if file_ext not in supported_extensions:
+                print(f"[WARNING] File extension '{file_ext}' may not be supported. Supported: {', '.join(supported_extensions)}")
+            
             # Upload audio file to Gemini using new client API
-            print("[STEP 1/3] Uploading audio file...")
-            audio_file = self.client.files.upload(file=audio_path)
-            print(f"[SUCCESS] Audio uploaded: {audio_file.name}")
+            print(f"[STEP 1/3] Uploading audio file ({file_size / 1024 / 1024:.2f}MB)...")
+            try:
+                audio_file = self.client.files.upload(file=audio_path)
+                file_name = getattr(audio_file, 'name', 'unknown') if audio_file else 'unknown'
+                print(f"[SUCCESS] Audio uploaded: {file_name}")
+            except Exception as upload_error:
+                error_msg = str(upload_error)
+                if 'invalid' in error_msg.lower() or 'format' in error_msg.lower() or 'unsupported' in error_msg.lower():
+                    raise ValueError(
+                        f"Unsupported audio format. Gemini API rejected the file format '{file_ext}'. "
+                        f"Please convert your audio file to MP3, WAV, M4A, OGG, WebM, or FLAC format. "
+                        f"Original error: {error_msg}"
+                    )
+                raise
 
             # Wait for file to become ACTIVE
             print("[STEP 2/3] Waiting for file to be ready...")
             import time
             max_wait = 30  # seconds
             waited = 0
-            while audio_file.state.name != 'ACTIVE' and waited < max_wait:
+            file_state = getattr(audio_file.state, 'name', None) if hasattr(audio_file, 'state') else None
+            while file_state != 'ACTIVE' and waited < max_wait:
                 time.sleep(1)
                 waited += 1
                 audio_file = self.client.files.get(name=audio_file.name)
+                file_state = getattr(audio_file.state, 'name', None) if hasattr(audio_file, 'state') else None
                 if waited % 5 == 0:
                     print(f"  ... still waiting ({waited}s)")
             
-            if audio_file.state.name != 'ACTIVE':
-                raise RuntimeError(f"File did not become ACTIVE after {max_wait}s (state: {audio_file.state.name})")
+            file_state = getattr(audio_file.state, 'name', None) if hasattr(audio_file, 'state') else None
+            if file_state != 'ACTIVE':
+                state_str = str(file_state) if file_state is not None else 'unknown'
+                raise RuntimeError(f"File did not become ACTIVE after {max_wait}s (state: {state_str})")
             
-            print(f"[SUCCESS] File is ready (state: {audio_file.state.name})")
+            state_str = str(file_state) if file_state is not None else 'unknown'
+            print(f"[SUCCESS] File is ready (state: {state_str})")
 
             # Generate content with audio + extraction prompt
             print("[STEP 3/3] Extracting client requirements...")
@@ -91,7 +121,11 @@ class GeminiAudioProcessor:
                 )
             )
 
-            result_text = response.text
+            result_text = response.text if hasattr(response, 'text') and response.text else None
+            if not result_text:
+                print("[DEBUG] Raw response: (empty or None)")
+                raise ValueError("Gemini API returned empty response")
+            
             print(f"[DEBUG] Raw response: {result_text[:500]}")
             
             # Clean up markdown code blocks if present
@@ -131,11 +165,11 @@ class GeminiAudioProcessor:
             Dict with structured client requirements
         """
         print("\n[PROCESSING] Text input (test mode)")
-        print(f"[MODEL] gemini-2.0-flash-exp")
+        print(f"[MODEL] {self.model_name}")
 
         try:
             extraction_prompt = self._create_extraction_prompt()
-            full_prompt = f"{extraction_prompt}\n\nCLIENT CONVERSATION:\n{text}"
+            full_prompt = extraction_prompt + "\n\nCLIENT CONVERSATION:\n" + text
 
             response = self.client.models.generate_content(
                 model=self.model_name,
@@ -172,8 +206,9 @@ class GeminiAudioProcessor:
         elif language.lower() == 'spanish':
             language_instruction = "\nLANGUAGE CONSTRAINT: Only process and respond in Spanish. Ignore any other languages spoken in the conversation."
 
-        return f"""
-You are analyzing a senior living client intake conversation (either audio or text).{language_instruction}
+        # Use regular string concatenation instead of f-string to avoid format specifier issues
+        prompt = """
+You are analyzing a senior living client intake conversation (either audio or text).""" + language_instruction + """
 Extract the following information and return it as JSON:
 
 {
@@ -227,6 +262,7 @@ CRITICAL RULES:
 
 Extract all available information from the conversation.
 """
+        return prompt
 
 
 def test_gemini_processor():

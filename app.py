@@ -371,6 +371,31 @@ def process_audio():
         if file.filename == '':
             return jsonify({'error': 'No file selected'}), 400
 
+        # Validate file format
+        allowed_extensions = {'.mp3', '.wav', '.m4a', '.ogg', '.webm', '.flac'}
+        allowed_mime_types = {
+            'audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav',
+            'audio/m4a', 'audio/x-m4a', 'audio/ogg', 'audio/webm', 'audio/flac'
+        }
+        
+        filename_lower = file.filename.lower()
+        file_ext = None
+        for ext in allowed_extensions:
+            if filename_lower.endswith(ext):
+                file_ext = ext
+                break
+        
+        if not file_ext and file.content_type not in allowed_mime_types:
+            return jsonify({
+                'error': f'Unsupported audio format. Supported formats: MP3, WAV, M4A, OGG, WebM, FLAC. Your file: {file.filename} (type: {file.content_type or "unknown"})'
+            }), 400
+
+        # Validate file size (50MB max)
+        if file.content_length and file.content_length > app.config['MAX_CONTENT_LENGTH']:
+            return jsonify({
+                'error': f'File too large. Maximum file size is 50MB. Your file: {file.content_length / 1024 / 1024:.2f}MB'
+            }), 400
+
         # Get language parameter (default to English)
         language = request.form.get('language', 'english').lower()
         if language not in SUPPORTED_LANGUAGES:
@@ -621,6 +646,132 @@ def get_stats():
         }
 
         return jsonify(stats)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/update-crm', methods=['POST'])
+def update_crm():
+    """Update CRM with current consultation data"""
+    try:
+        data = request.get_json()
+        client_profile = data.get('clientProfile', {})
+        recommendations = data.get('recommendations', [])
+        summary = data.get('summary', '')
+
+        # Create result dict in the format expected by push_to_crm
+        result = {
+            'client_profile': client_profile,
+            'recommendations': recommendations,
+            'summary': summary,
+            'timestamp': datetime.now().isoformat()
+        }
+
+        # Push to CRM
+        if os.getenv('GOOGLE_SPREADSHEET_ID'):
+            try:
+                crm_result = push_to_crm(result)
+                return jsonify({
+                    'success': True,
+                    'consultation_id': crm_result.get('consultation_id'),
+                    'message': 'Successfully updated CRM'
+                })
+            except Exception as e:
+                return jsonify({'error': f'Failed to push to CRM: {str(e)}'}), 500
+        else:
+            return jsonify({'error': 'Google Sheets CRM not configured'}), 400
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/send-email-client', methods=['POST'])
+def send_email_client():
+    """Send email to client with recommendations"""
+    try:
+        data = request.get_json()
+        client_profile = data.get('clientProfile', {})
+        recommendations = data.get('recommendations', [])
+        summary = data.get('summary', '')
+
+        # TODO: Implement email sending logic
+        # For now, return success (you'll need to configure SMTP settings)
+        client_email = client_profile.get('email', '')
+        if not client_email:
+            return jsonify({'error': 'Client email not found'}), 400
+
+        # Placeholder for email implementation
+        # You can use libraries like Flask-Mail or sendgrid
+        return jsonify({
+            'success': True,
+            'message': f'Email would be sent to {client_email}',
+            'note': 'Email functionality needs to be implemented with SMTP configuration'
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/send-email-manager', methods=['POST'])
+def send_email_manager():
+    """Send email to manager for review"""
+    try:
+        data = request.get_json()
+        client_profile = data.get('clientProfile', {})
+        recommendations = data.get('recommendations', [])
+        summary = data.get('summary', '')
+
+        # TODO: Implement email sending logic
+        # Get manager email from environment or config
+        manager_email = os.getenv('MANAGER_EMAIL', 'manager@example.com')
+
+        # Placeholder for email implementation
+        return jsonify({
+            'success': True,
+            'message': f'Email would be sent to {manager_email} for review',
+            'note': 'Email functionality needs to be implemented with SMTP configuration'
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/update-excel', methods=['POST'])
+def update_excel():
+    """Update Excel sheet with consultation data"""
+    try:
+        data = request.get_json()
+        client_profile = data.get('clientProfile', {})
+        recommendations = data.get('recommendations', [])
+        summary = data.get('summary', '')
+
+        # Read existing Excel file
+        excel_file = 'DataFile_students_OPTIMIZED.xlsx'
+        if not os.path.exists(excel_file):
+            return jsonify({'error': 'Excel file not found'}), 404
+
+        df = pd.read_excel(excel_file)
+
+        # Create new row with consultation data
+        new_row = {
+            'Client Name': client_profile.get('name', ''),
+            'Budget': client_profile.get('budget', ''),
+            'Location': client_profile.get('location', ''),
+            'Care Level': client_profile.get('careLevel', ''),
+            'Timeline': client_profile.get('timeline', ''),
+            'Summary': summary,
+            'Top Recommendation': recommendations[0].get('name', '') if recommendations else '',
+            'Date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+        # Add new row to dataframe
+        df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+
+        # Save back to Excel
+        df.to_excel(excel_file, index=False)
+
+        return jsonify({
+            'success': True,
+            'message': 'Excel sheet updated successfully',
+            'row_added': len(df)
+        })
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

@@ -26,7 +26,7 @@ class GeminiWebSocketProxy:
     async def start_session(self, system_instruction: str, tools: list):
         """Start Gemini live session"""
         self.session = await self.client.aio.live.connect(
-            model='gemini-2.0-flash-exp',
+            model='gemini-2.5-flash-live-preview',
             config=types.LiveConnectConfig(
                 response_modalities=['AUDIO'],
                 speech_config=types.SpeechConfig(

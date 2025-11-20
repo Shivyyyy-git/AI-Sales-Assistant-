@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="gemini-api-key" content="" id="gemini-api-key-meta">
     <title>AI Senior Living Sales Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,6 +73,21 @@
 </head>
   <body class="bg-[#F8F7F2]">
     <div id="root"></div>
+    <script type="module">
+      // Inject API key from Vite environment variables
+      // This will be replaced by Vite during build/dev
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY || '';
+      if (apiKey) {
+        window.GEMINI_API_KEY = apiKey;
+        const metaTag = document.getElementById('gemini-api-key-meta');
+        if (metaTag) {
+          metaTag.setAttribute('content', apiKey);
+        }
+        console.log('[API Key] Loaded from environment variables');
+      } else {
+        console.warn('[API Key] Not found in environment variables');
+      }
+    </script>
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>

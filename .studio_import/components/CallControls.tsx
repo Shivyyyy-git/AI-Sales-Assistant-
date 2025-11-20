@@ -14,7 +14,6 @@ interface CallControlsProps {
   onEnd: () => void;
   onToggleAssistMode: () => void;
   onTogglePause: () => void;
-  onForceUpdate: () => void;
   onEscalate: () => void;
   onSaveSummary: () => void;
   onAudioFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -65,7 +64,7 @@ const CallStatusIndicator: React.FC<{ status: CallStatus, isAgentAssistMode: boo
 };
 
 
-const CallControls: React.FC<CallControlsProps> = ({ status, isAgentAssistMode, isCallPaused, selectedLanguage, onLanguageChange, onStart, onEnd, onToggleAssistMode, onTogglePause, onForceUpdate, onEscalate, onSaveSummary, onAudioFileSelect, onProcessText, hasData }) => {
+const CallControls: React.FC<CallControlsProps> = ({ status, isAgentAssistMode, isCallPaused, selectedLanguage, onLanguageChange, onStart, onEnd, onToggleAssistMode, onTogglePause, onEscalate, onSaveSummary, onAudioFileSelect, onProcessText, hasData }) => {
   const isCallActiveOrConnecting = status === CallStatus.ACTIVE || status === CallStatus.CONNECTING;
   const isCallActive = status === CallStatus.ACTIVE;
   const isProcessing = status === CallStatus.PROCESSING;
@@ -75,10 +74,10 @@ const CallControls: React.FC<CallControlsProps> = ({ status, isAgentAssistMode, 
 
   const buttonBaseClasses = "px-4 py-2 text-sm font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#F8F7F2] transition-all duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed";
 
-  const languages: { code: SupportedLanguage; name: string; flag: string }[] = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
+  const languages: { code: SupportedLanguage; name: string; disabled?: boolean; note?: string }[] = [
+    { code: 'en', name: 'English' },
+    { code: 'es', name: 'Español' },
+    { code: 'hi', name: 'हिन्दी (Coming Soon)', disabled: true, note: 'Coming Soon' },
   ];
 
   const currentLanguage = languages.find(l => l.code === selectedLanguage) || languages[0];
@@ -102,67 +101,73 @@ const CallControls: React.FC<CallControlsProps> = ({ status, isAgentAssistMode, 
 
   return (
     <div className="flex items-center space-x-4">
-      <CallStatusIndicator 
-        status={status} 
-        isAgentAssistMode={isAgentAssistMode}
-        subtitle={isAgentAssistMode && isCallActive ? 'Silent Mode' : undefined}
-      />
-      
-      {/* Language Selector - Only shown when not in active call */}
-      {!isCallActiveOrConnecting && (
-        <div className="relative" ref={languageMenuRef}>
-          <button
-            onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-            disabled={isProcessing}
-            className={`${buttonBaseClasses} bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-blue-500`}
-            title="Select Language"
-          >
-            <span className="text-lg mr-2">{currentLanguage.flag}</span>
-            <span>{currentLanguage.name}</span>
+      {/* Language Selector - Always reserve space to prevent layout shift */}
+      <div className="relative" ref={languageMenuRef}>
+        {!isCallActiveOrConnecting ? (
+          <>
+            <button
+              onClick={() => setShowLanguageMenu(!showLanguageMenu)}
+              disabled={isProcessing}
+              className={`${buttonBaseClasses} bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-blue-500`}
+              title="Select Language"
+            >
+              <div className="text-left">
+                <div className="text-sm font-semibold">{currentLanguage.name}</div>
+                {currentLanguage.code === 'hi' && <p className="text-[11px] text-amber-600">Coming soon</p>}
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {showLanguageMenu && (
+              <div className="absolute top-full mt-2 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[160px]">
+                {languages.map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      if (lang.disabled) return;
+                      onLanguageChange(lang.code);
+                      setShowLanguageMenu(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 flex items-center transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                      lang.disabled ? 'opacity-60 cursor-not-allowed bg-gray-50 text-gray-400' : 'hover:bg-gray-50 text-gray-700'
+                    } ${lang.code === selectedLanguage ? 'bg-blue-50 text-blue-600 font-semibold' : ''}`}
+                    disabled={lang.disabled}
+                  >
+                    <div className="flex flex-col flex-1">
+                      <span>{lang.name}</span>
+                      {lang.note && <span className="text-[11px] text-amber-600">{lang.note}</span>}
+                    </div>
+                    {lang.code === selectedLanguage && !lang.disabled && (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-auto" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          // Invisible placeholder to maintain layout when call is active
+          <div className={`${buttonBaseClasses} bg-transparent border border-transparent invisible pointer-events-none`} aria-hidden="true">
+            <div className="text-left">
+              <div className="text-sm font-semibold">{currentLanguage.name}</div>
+            </div>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
-          </button>
-          {showLanguageMenu && (
-            <div className="absolute top-full mt-2 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-[160px]">
-              {languages.map(lang => (
-                <button
-                  key={lang.code}
-                  onClick={() => {
-                    onLanguageChange(lang.code);
-                    setShowLanguageMenu(false);
-                  }}
-                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center space-x-2 transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                    lang.code === selectedLanguage ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-gray-700'
-                  }`}
-                >
-                  <span className="text-lg">{lang.flag}</span>
-                  <span>{lang.name}</span>
-                  {lang.code === selectedLanguage && (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-auto" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
       
       {isCallActiveOrConnecting ? (
          <div className="flex items-center space-x-2">
-            <button
-                onClick={onForceUpdate}
-                disabled={!isCallActive}
-                className={`${buttonBaseClasses} bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-blue-500`}
-                title="Restart the AI session. This forces the AI to re-evaluate the conversation and provide fresh recommendations based on the latest information."
-            >
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="http://www.w3.org/2000/svg" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Push Recommendation
-            </button>
+            <CallStatusIndicator 
+              status={status} 
+              isAgentAssistMode={isAgentAssistMode}
+              subtitle={isAgentAssistMode && isCallActive ? 'Silent Mode' : undefined}
+            />
             <button
                 onClick={onToggleAssistMode}
                 disabled={!isCallActive}
@@ -237,7 +242,7 @@ const CallControls: React.FC<CallControlsProps> = ({ status, isAgentAssistMode, 
                 type="file"
                 ref={fileInputRef}
                 onChange={onAudioFileSelect}
-                accept="audio/*"
+                accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/m4a,audio/x-m4a,audio/ogg,audio/webm,audio/flac,.mp3,.wav,.m4a,.ogg,.webm,.flac"
                 className="hidden"
             />
             <button
@@ -258,16 +263,40 @@ const CallControls: React.FC<CallControlsProps> = ({ status, isAgentAssistMode, 
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
               Process Text
             </button>
-            <button
-              onClick={onStart}
-              disabled={isProcessing}
-              className={`${buttonBaseClasses} bg-blue-600 border border-transparent text-white hover:bg-blue-700 focus:ring-blue-500`}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-              Start Call
-            </button>
+            {status === CallStatus.ERROR ? (
+              <button
+                onClick={onStart}
+                disabled={isProcessing}
+                className={`${buttonBaseClasses} bg-red-600 border border-transparent text-white hover:bg-red-700 focus:ring-red-500 animate-pulse ring-4 ring-red-300 ring-opacity-50 transform transition-transform hover:scale-105`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                Error - Retry
+              </button>
+            ) : isCallActiveOrConnecting ? (
+              <button
+                onClick={onEnd}
+                className={`${buttonBaseClasses} bg-green-600 border border-transparent text-white hover:bg-green-700 focus:ring-green-500`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                </svg>
+                End
+              </button>
+            ) : (
+              <button
+                onClick={onStart}
+                disabled={isProcessing}
+                className={`${buttonBaseClasses} bg-blue-600 border border-transparent text-white hover:bg-blue-700 focus:ring-blue-500`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                Start Call
+              </button>
+            )}
         </div>
       )}
     </div>
