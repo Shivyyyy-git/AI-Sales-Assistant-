@@ -35,8 +35,6 @@ class GeminiAudioProcessor:
         self.client = genai.Client(api_key=api_key)
         self.model_name = 'gemini-2.0-flash-exp'
 
-        print("[INFO] Gemini 2.5 Flash initialized")
-
     def process_audio_file(self, audio_path: str, language: str = 'english') -> Dict[str, Any]:
         """
         Process audio file and extract client requirements
@@ -52,17 +50,11 @@ class GeminiAudioProcessor:
         if not os.path.exists(audio_path):
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
 
-        print(f"\n[PROCESSING] Audio file: {audio_path}")
-        print(f"[MODEL] gemini-2.0-flash-exp")
-
         try:
             # Upload audio file to Gemini using new client API
-            print("[STEP 1/3] Uploading audio file...")
             audio_file = self.client.files.upload(file=audio_path)
-            print(f"[SUCCESS] Audio uploaded: {audio_file.name}")
 
             # Wait for file to become ACTIVE
-            print("[STEP 2/3] Waiting for file to be ready...")
             import time
             max_wait = 30  # seconds
             waited = 0
@@ -70,16 +62,11 @@ class GeminiAudioProcessor:
                 time.sleep(1)
                 waited += 1
                 audio_file = self.client.files.get(name=audio_file.name)
-                if waited % 5 == 0:
-                    print(f"  ... still waiting ({waited}s)")
             
             if audio_file.state.name != 'ACTIVE':
                 raise RuntimeError(f"File did not become ACTIVE after {max_wait}s (state: {audio_file.state.name})")
-            
-            print(f"[SUCCESS] File is ready (state: {audio_file.state.name})")
 
             # Generate content with audio + extraction prompt
-            print("[STEP 3/3] Extracting client requirements...")
             extraction_prompt = self._create_extraction_prompt(language)
 
             response = self.client.models.generate_content(
@@ -92,7 +79,6 @@ class GeminiAudioProcessor:
             )
 
             result_text = response.text
-            print(f"[DEBUG] Raw response: {result_text[:500]}")
             
             # Clean up markdown code blocks if present
             if result_text.strip().startswith('```'):
@@ -113,12 +99,10 @@ class GeminiAudioProcessor:
             else:
                 client_requirements = parsed
 
-            print("[SUCCESS] Extraction complete\n")
             return client_requirements
 
         except Exception as e:
-            print(f"[ERROR] Failed to process audio: {str(e)}")
-            raise
+            raise RuntimeError(f"Failed to process audio: {str(e)}") from e
 
     def process_text_input(self, text: str) -> Dict[str, Any]:
         """
